@@ -1,0 +1,8 @@
+source_data:
+  url: https://ergast.com/api/f1/seasons.json?limit=100
+
+source_download_dirs:
+  - data_path
+
+local_data_dirs:
+  - local_data_path

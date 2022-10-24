@@ -5,11 +5,12 @@ from tqdm import tqdm
 import logging
 from src.utils.common import read_yaml, create_directories
 from src.utils.mongo_operations import race_data_to_mongo, drivers_data_to_mongo
-from src.utils.mongo_operations import cicuits_data_to_mongo, raceresults_data_to_mongo
+from src.utils.mongo_operations import cicuits_data_to_mongo, raceresults_data_to_mongo, data_from_mongo
 import random
 import pymongo
 import json
 import requests
+from pathlib import Path  
 
 STAGE = "Get Data"
 
@@ -28,7 +29,6 @@ def main(config_path, params_path, secrets_path):
     secrets = read_yaml(secrets_path)
 
     conn_str = secrets["mongodb"]["url"].format(secrets["mongodb"]["username"],secrets["mongodb"]["pwd"])
-    print(conn_str)
     mclient = pymongo.MongoClient(conn_str)
 
 
@@ -36,6 +36,11 @@ def main(config_path, params_path, secrets_path):
     drivers_data_to_mongo(conn_str,mclient,config)
     cicuits_data_to_mongo(conn_str,mclient,config)
     raceresults_data_to_mongo(conn_str,mclient,config)
+    
+    result_df = data_from_mongo(conn_str, mclient,config)
+    filepath = Path(config["Prepared_Data_Path"])
+    filepath.parent.mkdir(parents=True, exist_ok=True)  
+    result_df.to_csv(filepath)
 
 
 
@@ -55,3 +60,5 @@ if __name__ == '__main__':
     except Exception as e:
         logging.exception(e)
         raise e
+
+

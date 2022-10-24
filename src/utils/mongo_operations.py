@@ -45,6 +45,8 @@ def drivers_data_to_mongo(conn_str, mclient,config):
         logging.info(f"Started: Drivers data transfer to Mongo DB")
         for i in drivers:
             collection.insert_one(i)
+        
+        logging.info(f"Completed: Drivers' data transfer to Mongo DB")
 
     except Exception as e: 
         print('Error encountered: '+ str(e))      
@@ -66,9 +68,39 @@ def cicuits_data_to_mongo(conn_str, mclient,config):
         collection = db.circuits
         c_obj = requests.get(f"https://ergast.com/api/f1/circuits.json?limit=1000")
         circuits = json.loads(c_obj.text)["MRData"]["CircuitTable"]["Circuits"]
-        logging.info(f"Started: Circuits data transfer to Mongo DB")
+        logging.info(f"Started: Circuits' data transfer to Mongo DB")
         for i in circuits:
             collection.insert_one(i)
+        logging.info(f"Completed: Circuits' data transfer to Mongo DB")
+
+    except Exception as e: 
+        print('Error encountered: '+ str(e)) 
+
+
+
+def raceresults_data_to_mongo(conn_str, mclient,config):
+
+    """ 
+    Function to get Race result's data from Ergast API and write the data to Mongo DB collection
+
+    """
+    seasons = requests.get(config["source_data"]["url"])
+    f1_seasons = json.loads(seasons.text)["MRData"]["SeasonTable"]["Seasons"]
+
+
+    try:
+        db = mclient.Ergast_F1
+        collection = db.results
+        
+        logging.info(f"Started: Race results data transfer to Mongo DB")
+        for season in f1_seasons:
+            season_results = requests.get(f"http://ergast.com/api/f1/{season['season']}/results.json?limit=1000")
+            races = json.loads(season_results.text)["MRData"]["RaceTable"]["Races"]
+            
+            for i in races:
+                collection.insert_one(i)
+                
+        logging.info(f"Completed: Race results data transfer to Mongo DB")
 
     except Exception as e: 
         print('Error encountered: '+ str(e)) 

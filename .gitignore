@@ -138,4 +138,4 @@ dmypy.json
 # add secret keys or API keys here
 configs/secrets.yaml
 
-logs
+logs/running_logs.log

@@ -4,7 +4,7 @@ import shutil
 from tqdm import tqdm
 import logging
 from src.utils.common import read_yaml, create_directories
-from src.utils.mongo_operations import race_data_to_mongo, drivers_data_to_mongo
+from src.utils.mongo_operations import race_data_to_mongo, drivers_data_to_mongo, cicuits_data_to_mongo
 import random
 import pymongo
 import json
@@ -33,6 +33,7 @@ def main(config_path, params_path, secrets_path):
 
     race_data_to_mongo(conn_str,mclient,config)
     drivers_data_to_mongo(conn_str,mclient,config)
+    cicuits_data_to_mongo(conn_str,mclient,config)
 
 
 

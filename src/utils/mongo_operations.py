@@ -48,3 +48,27 @@ def drivers_data_to_mongo(conn_str, mclient,config):
 
     except Exception as e: 
         print('Error encountered: '+ str(e))      
+
+
+
+
+def cicuits_data_to_mongo(conn_str, mclient,config):
+    """ 
+    Function to get Circuits data from Ergast API and write the data to Mongo DB collection
+
+    """
+    seasons = requests.get(config["source_data"]["url"])
+    f1_seasons = json.loads(seasons.text)["MRData"]["SeasonTable"]["Seasons"]
+
+
+    try:
+        db = mclient.Ergast_F1
+        collection = db.circuits
+        c_obj = requests.get(f"https://ergast.com/api/f1/circuits.json?limit=1000")
+        circuits = json.loads(c_obj.text)["MRData"]["CircuitTable"]["Circuits"]
+        logging.info(f"Started: Circuits data transfer to Mongo DB")
+        for i in circuits:
+            collection.insert_one(i)
+
+    except Exception as e: 
+        print('Error encountered: '+ str(e)) 

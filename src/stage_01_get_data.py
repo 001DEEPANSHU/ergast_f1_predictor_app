@@ -38,10 +38,9 @@ def main(config_path, params_path, secrets_path):
     raceresults_data_to_mongo(conn_str,mclient,config)
     
     result_df = data_from_mongo(conn_str, mclient,config)
-    filepath = Path(config["Prepared_Data_Path"])
+    filepath = Path(config["Prepared_Data_Path"][0])
     filepath.parent.mkdir(parents=True, exist_ok=True)  
     result_df.to_csv(filepath)
-
 
 
 
@@ -54,9 +53,9 @@ if __name__ == '__main__':
 
     try:
         logging.info("\n********************")
-        logging.info(f">>>>> stage {STAGE} started <<<<<")
+        logging.info(f">>>>> Stage {STAGE} started <<<<<")
         main(config_path=parsed_args.config, params_path=parsed_args.params, secrets_path=parsed_args.secrets)
-        logging.info(f">>>>> stage {STAGE} completed!<<<<<\n")
+        logging.info(f">>>>> Stage {STAGE} completed!<<<<<\n")
     except Exception as e:
         logging.exception(e)
         raise e
